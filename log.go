@@ -2,13 +2,15 @@ package log
 
 import (
 	"flag"
+	"fmt"
+	"io"
 	"log"
 )
 
 type LogLevel int
 
 const (
-	LevelTrace LogLevel = iota
+	LevelTrace LogLevel = 1 + iota
 	LevelDebug
 	LevelInfo
 	LevelWarning
@@ -16,13 +18,12 @@ const (
 	LevelCritical
 )
 
-var Level = LevelInfo
+var (
+	Level  LogLevel  = 0
+	Writer io.Writer = DefaultWriter{}
+)
 
-func init() {
-	logLevel := flag.String("log-level", "info", "Log level: trace|debug|info|warning|error|critical")
-	flag.Parse()
-	Level = levelFromString(*logLevel)
-}
+var logFlag = flag.String("log-level", "info", "Log level: trace|debug|info|warning|error|critical")
 
 func levelFromString(str string) LogLevel {
 	switch str {
@@ -42,16 +43,21 @@ func levelFromString(str string) LogLevel {
 	return LevelInfo // Default Level
 }
 
+func printString(s string) {
+	Writer.Write([]byte(s))
+}
+
 func print(level LogLevel, value interface{}) {
+	if Level == 0 {
+		Level = levelFromString(*logFlag)
+	}
 	if level >= Level {
-		log.Println(value)
+		printString(fmt.Sprint(value))
 	}
 }
 
 func printf(level LogLevel, format string, params ...interface{}) {
-	if level >= Level {
-		log.Printf(format, params...)
-	}
+	print(level, fmt.Sprintf(format, params...))
 }
 
 func Println(value interface{})                   { log.Println(value) }

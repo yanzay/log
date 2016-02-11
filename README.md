@@ -18,9 +18,14 @@ Log adds `--log-level` flag to your program:
 ```
 package main
 
-import "github.com/yanzay/log"
+import (
+    "flag"
+
+    "github.com/yanzay/log"
+)
 
 func main() {
+    flag.Parse()
     log.Info("info")
 }
 ```
