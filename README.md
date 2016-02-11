@@ -36,3 +36,18 @@ Usage:
   -log-level string
         Log level: trace|debug|info|warning|error|critical (default "info")
 ```
+
+## Advanced Usage
+
+You can set logging level manually by:
+```
+log.Level = LevelTrace
+```
+
+Also you can use your own log writer:
+
+```
+log.Writer = myWriter
+```
+
+`myWriter` should implement `io.Writer` interface.
