@@ -1,4 +1,4 @@
-// log is logging package with levels and pluggable writers
+// Package log is a logging package with levels and pluggable writers
 package log
 
 import (
