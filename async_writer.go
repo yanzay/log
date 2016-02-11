@@ -4,10 +4,12 @@ import (
 	"log"
 )
 
+// AsyncWriter is asynchronous writer, writes in separate goroutine
 type AsyncWriter struct {
 	lines chan []byte
 }
 
+// NewAsyncWriter creates writer and starts writing routine
 func NewAsyncWriter() *AsyncWriter {
 	aw := &AsyncWriter{
 		lines: make(chan []byte, 100),

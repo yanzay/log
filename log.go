@@ -6,25 +6,33 @@ import (
 	"io"
 )
 
-type LogLevel int
+type logLevel int
 
 const (
-	LevelTrace LogLevel = 1 + iota
+	// LevelTrace is most detailed logging
+	LevelTrace logLevel = 1 + iota
+	// LevelDebug is level for debugging logs
 	LevelDebug
+	// LevelInfo is level for info logs
 	LevelInfo
+	// LevelWarning is level for warning logs
 	LevelWarning
+	// LevelError is level for error logs
 	LevelError
+	// LevelCritical is logging only for fatal errors
 	LevelCritical
 )
 
 var (
-	Level  LogLevel  = 0
+	// Level is current log level for logger
+	Level logLevel
+	// Writer for writing logs to. You can change it for your own writer
 	Writer io.Writer = DefaultWriter{}
 )
 
 var logFlag = flag.String("log-level", "info", "Log level: trace|debug|info|warning|error|critical")
 
-func levelFromString(str string) LogLevel {
+func levelFromString(str string) logLevel {
 	switch str {
 	case "trace":
 		return LevelTrace
@@ -43,10 +51,13 @@ func levelFromString(str string) LogLevel {
 }
 
 func printString(s string) {
-	Writer.Write([]byte(s))
+	_, err := Writer.Write([]byte(s))
+	if err != nil {
+		fmt.Printf("Error write log: %s\n", err)
+	}
 }
 
-func print(level LogLevel, value interface{}) {
+func lprint(level logLevel, value interface{}) {
 	if Level == 0 {
 		Level = levelFromString(*logFlag)
 	}
@@ -55,37 +66,58 @@ func print(level LogLevel, value interface{}) {
 	}
 }
 
-func printf(level LogLevel, format string, params ...interface{}) {
-	print(level, fmt.Sprintf(format, params...))
+func lprintf(level logLevel, format string, params ...interface{}) {
+	lprint(level, fmt.Sprintf(format, params...))
 }
 
+// Println is unconditional log
 func Println(value interface{}) {
 	printString(fmt.Sprint(value))
 }
+
+// Printf is unconditional formatted log
 func Printf(format string, params ...interface{}) {
 	printString(fmt.Sprintf(format, params...))
 }
 
-func Trace(value interface{})                     { print(LevelTrace, value) }
-func Tracef(format string, params ...interface{}) { printf(LevelTrace, format, params...) }
+// Trace logging. Use it for most detailed logs
+func Trace(value interface{}) { lprint(LevelTrace, value) }
 
-func Debug(value interface{})                     { print(LevelDebug, value) }
-func Debugf(format string, params ...interface{}) { printf(LevelDebug, format, params...) }
+// Tracef is formatted trace logging
+func Tracef(format string, params ...interface{}) { lprintf(LevelTrace, format, params...) }
 
-func Info(value interface{})                     { print(LevelInfo, value) }
-func Infof(format string, params ...interface{}) { printf(LevelInfo, format, params...) }
+// Debug logging
+func Debug(value interface{}) { lprint(LevelDebug, value) }
 
-func Warning(value interface{})                     { print(LevelWarning, value) }
-func Warningf(format string, params ...interface{}) { printf(LevelWarning, format, params...) }
+// Debugf is formatted debug logging
+func Debugf(format string, params ...interface{}) { lprintf(LevelDebug, format, params...) }
 
-func Error(value interface{})                     { print(LevelError, value) }
-func Errorf(format string, params ...interface{}) { printf(LevelError, format, params...) }
+// Info logging
+func Info(value interface{}) { lprint(LevelInfo, value) }
 
+// Infof is formatted info logging
+func Infof(format string, params ...interface{}) { lprintf(LevelInfo, format, params...) }
+
+// Warning logging
+func Warning(value interface{}) { lprint(LevelWarning, value) }
+
+// Warningf is formatted warning logging
+func Warningf(format string, params ...interface{}) { lprintf(LevelWarning, format, params...) }
+
+// Error logging
+func Error(value interface{}) { lprint(LevelError, value) }
+
+// Errorf is formatted error logging
+func Errorf(format string, params ...interface{}) { lprintf(LevelError, format, params...) }
+
+// Fatal logs fatal error and panic
 func Fatal(value interface{}) {
 	str := fmt.Sprint(value)
 	printString(str)
 	panic(str)
 }
+
+// Fatalf logs fatal error with format and panic
 func Fatalf(format string, params ...interface{}) {
 	str := fmt.Sprintf(format, params...)
 	printString(str)
