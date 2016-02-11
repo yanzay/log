@@ -1,5 +1,7 @@
 # Go logging rethinked
 
+[![Circle CI](https://circleci.com/gh/yanzay/log.svg?style=svg)](https://circleci.com/gh/yanzay/log)
+
 Usage:
 
 ```
@@ -10,12 +12,13 @@ log.Debug("debug") // log only with `debug` level and lower
 log.Info("info") // log only with `info` level and lower
 log.Warning("warn") // log with `warning` level and lower
 log.Error("err") // log with `error` and `critical` level
-log.Fatal("haha") // log and os.Exit(1)
+log.Fatal("haha") // log and panic("haha")
 ```
 
 Log adds `--log-level` flag to your program:
 
 ```
+// main.go
 package main
 
 import (
@@ -41,13 +44,12 @@ Usage:
 
 You can set logging level manually by:
 ```
-log.Level = LevelTrace
+log.Level = log.LevelTrace
 ```
 
 Also you can use your own log writer:
 
 ```
-log.Writer = myWriter
+log.Writer = myWriter // myWriter should implement io.Writer interface
 ```
 
-`myWriter` should implement `io.Writer` interface.

@@ -4,7 +4,6 @@ import (
 	"flag"
 	"fmt"
 	"io"
-	"log"
 )
 
 type LogLevel int
@@ -60,8 +59,12 @@ func printf(level LogLevel, format string, params ...interface{}) {
 	print(level, fmt.Sprintf(format, params...))
 }
 
-func Println(value interface{})                   { log.Println(value) }
-func Printf(format string, params ...interface{}) { log.Printf(format, params...) }
+func Println(value interface{}) {
+	printString(fmt.Sprint(value))
+}
+func Printf(format string, params ...interface{}) {
+	printString(fmt.Sprintf(format, params...))
+}
 
 func Trace(value interface{})                     { print(LevelTrace, value) }
 func Tracef(format string, params ...interface{}) { printf(LevelTrace, format, params...) }
@@ -78,5 +81,13 @@ func Warningf(format string, params ...interface{}) { printf(LevelWarning, forma
 func Error(value interface{})                     { print(LevelError, value) }
 func Errorf(format string, params ...interface{}) { printf(LevelError, format, params...) }
 
-func Fatal(value interface{})                     { log.Fatal(value) }
-func Fatalf(format string, params ...interface{}) { log.Fatalf(format, params...) }
+func Fatal(value interface{}) {
+	str := fmt.Sprint(value)
+	printString(str)
+	panic(str)
+}
+func Fatalf(format string, params ...interface{}) {
+	str := fmt.Sprintf(format, params...)
+	printString(str)
+	panic(str)
+}
