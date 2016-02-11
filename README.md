@@ -1,6 +1,7 @@
 # Go logging rethinked
 
 [![Circle CI](https://circleci.com/gh/yanzay/log.svg?style=svg)](https://circleci.com/gh/yanzay/log)
+[![Build Status](https://travis-ci.org/yanzay/log.svg?branch=master)](https://travis-ci.org/yanzay/log)
 
 Usage:
 
