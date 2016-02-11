@@ -3,6 +3,8 @@
 [![Circle CI](https://circleci.com/gh/yanzay/log.svg?style=svg)](https://circleci.com/gh/yanzay/log)
 [![Build Status](https://travis-ci.org/yanzay/log.svg?branch=master)](https://travis-ci.org/yanzay/log)
 [![Coverage Status](https://coveralls.io/repos/github/yanzay/log/badge.svg?branch=master)](https://coveralls.io/github/yanzay/log?branch=master)
+[![Go Report Card](https://goreportcard.com/badge/github.com/yanzay/log)](https://goreportcard.com/report/github.com/yanzay/log)
+
 [![GoDoc](https://godoc.org/github.com/yanzay/log?status.svg)](https://godoc.org/github.com/yanzay/log)
 
 ## Usage
