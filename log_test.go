@@ -4,7 +4,9 @@ import (
 	"fmt"
 	"testing"
 
+	"flag"
 	c "github.com/smartystreets/goconvey/convey"
+	"os"
 )
 
 type MockWriter struct {
@@ -112,7 +114,7 @@ func TestError(t *testing.T) {
 			c.So(writer.GetLastLog(), c.ShouldEqual, "test")
 		})
 		c.Convey("When Level is LevelCritical", func() {
-			Level = LevelCritical
+			Level = LevelFatal
 			Error("badtest")
 			c.So(writer.GetLastLog(), c.ShouldNotEqual, "badtest")
 		})
@@ -124,7 +126,7 @@ func TestCritical(t *testing.T) {
 		writer := &MockWriter{}
 		Writer = writer
 		c.Convey("When Level is LevelCritical", func() {
-			Level = LevelCritical
+			Level = LevelFatal
 			c.So(func() { Fatal("fatal") }, c.ShouldPanic)
 			c.So(writer.GetLastLog(), c.ShouldEqual, "fatal")
 		})
@@ -133,47 +135,54 @@ func TestCritical(t *testing.T) {
 
 func TestFlags(t *testing.T) {
 	c.Convey("Flags should be parsed and translated to log levels", t, func() {
-		Level = 0
 		c.Convey("When flag is 'trace'", func() {
-			f := "trace"
-			logFlag = &f
-			Info("test")
+			os.Args = []string{"", "--log-level", "trace"}
+			flag.Parse()
+			c.So(Level.String(), c.ShouldEqual, "trace")
 			c.So(Level, c.ShouldEqual, LevelTrace)
 		})
 		c.Convey("When flag is 'debug'", func() {
-			f := "debug"
-			logFlag = &f
-			Debug("test")
+			os.Args = []string{"", "--log-level", "debug"}
+			flag.Parse()
+			c.So(Level.String(), c.ShouldEqual, "debug")
 			c.So(Level, c.ShouldEqual, LevelDebug)
 		})
 		c.Convey("When flag is 'info'", func() {
-			f := "info"
-			logFlag = &f
-			Debug("test")
+			os.Args = []string{"", "--log-level", "info"}
+			flag.Parse()
+			c.So(Level.String(), c.ShouldEqual, "info")
 			c.So(Level, c.ShouldEqual, LevelInfo)
 		})
 		c.Convey("When flag is 'warning'", func() {
-			f := "warning"
-			logFlag = &f
-			Debug("test")
+			os.Args = []string{"", "--log-level", "warning"}
+			flag.Parse()
+			c.So(Level.String(), c.ShouldEqual, "warning")
 			c.So(Level, c.ShouldEqual, LevelWarning)
 		})
 		c.Convey("When flag is 'error'", func() {
-			f := "error"
-			logFlag = &f
-			Debug("test")
+			os.Args = []string{"", "--log-level", "error"}
+			flag.Parse()
+			c.So(Level.String(), c.ShouldEqual, "error")
 			c.So(Level, c.ShouldEqual, LevelError)
 		})
-		c.Convey("When flag is 'critical'", func() {
-			f := "critical"
-			logFlag = &f
-			Debug("test")
-			c.So(Level, c.ShouldEqual, LevelCritical)
+		c.Convey("When flag is 'fatal'", func() {
+			os.Args = []string{"", "--log-level", "fatal"}
+			flag.Parse()
+			c.So(Level.String(), c.ShouldEqual, "fatal")
+			c.So(Level, c.ShouldEqual, LevelFatal)
 		})
+	})
+
+	c.Convey("Flags should yield an error", t, func() {
+		Level = LevelInfo
 		c.Convey("When flag is 'incorrect'", func() {
-			f := "incorrect"
-			logFlag = &f
-			Debug("test")
+			args := []string{"--log-level", "incorrect"}
+			flags := flag.NewFlagSet("testing", flag.ContinueOnError)
+			flags.Var(&Level, "log-level", "Log level: trace|debug|info|warning|error|fatal")
+			err := flags.Parse(args)
+			c.So(err.Error(), c.ShouldContainSubstring, "Unknown logging level incorrect")
+
+			c.So(logLevel(0).String(), c.ShouldEqual, "unknown")
 			c.So(Level, c.ShouldEqual, LevelInfo)
 		})
 	})
