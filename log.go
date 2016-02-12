@@ -9,6 +9,46 @@ import (
 
 type logLevel int
 
+func (ll logLevel) String() string {
+	switch ll {
+	case LevelTrace:
+		return "trace"
+	case LevelDebug:
+		return "debug"
+	case LevelInfo:
+		return "info"
+	case LevelWarning:
+		return "warning"
+	case LevelError:
+		return "error"
+	case LevelFatal:
+		return "fatal"
+	}
+
+	return "unknown"
+}
+
+func (ll *logLevel) Set(value string) error {
+	switch value {
+	case "trace":
+		*ll = LevelTrace
+	case "debug":
+		*ll = LevelDebug
+	case "info":
+		*ll = LevelInfo
+	case "warning":
+		*ll = LevelWarning
+	case "error":
+		*ll = LevelError
+	case "fatal":
+		*ll = LevelFatal
+	default:
+		return fmt.Errorf("Unknown logging level %s", value)
+	}
+
+	return nil
+}
+
 const (
 	// LevelTrace is most detailed logging
 	LevelTrace logLevel = 1 + iota
@@ -20,35 +60,19 @@ const (
 	LevelWarning
 	// LevelError is level for error logs
 	LevelError
-	// LevelCritical is logging only for fatal errors
-	LevelCritical
+	// LevelFatal is logging only for fatal errors
+	LevelFatal
 )
 
 var (
 	// Level is current log level for logger
-	Level logLevel
+	Level = LevelInfo
 	// Writer for writing logs to. You can change it for your own writer
 	Writer io.Writer = DefaultWriter{}
 )
 
-var logFlag = flag.String("log-level", "info", "Log level: trace|debug|info|warning|error|critical")
-
-func levelFromString(str string) logLevel {
-	switch str {
-	case "trace":
-		return LevelTrace
-	case "debug":
-		return LevelDebug
-	case "info":
-		return LevelInfo
-	case "warning":
-		return LevelWarning
-	case "error":
-		return LevelError
-	case "critical":
-		return LevelCritical
-	}
-	return LevelInfo // Default Level
+func init() {
+	flag.Var(&Level, "log-level", "Log level: trace|debug|info|warning|error|fatal")
 }
 
 func printString(s string) {
@@ -59,9 +83,6 @@ func printString(s string) {
 }
 
 func lprint(level logLevel, value interface{}) {
-	if Level == 0 {
-		Level = levelFromString(*logFlag)
-	}
 	if level >= Level {
 		printString(fmt.Sprint(value))
 	}
