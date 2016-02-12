@@ -66,7 +66,7 @@ const (
 
 var (
 	// Level is current log level for logger
-	Level logLevel = LevelInfo
+	Level = LevelInfo
 	// Writer for writing logs to. You can change it for your own writer
 	Writer io.Writer = DefaultWriter{}
 )

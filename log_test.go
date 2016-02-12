@@ -5,8 +5,9 @@ import (
 	"testing"
 
 	"flag"
-	c "github.com/smartystreets/goconvey/convey"
 	"os"
+
+	c "github.com/smartystreets/goconvey/convey"
 )
 
 type MockWriter struct {
