@@ -113,7 +113,7 @@ func TestError(t *testing.T) {
 			Error("test")
 			c.So(writer.GetLastLog(), c.ShouldEqual, "test")
 		})
-		c.Convey("When Level is LevelCritical", func() {
+		c.Convey("When Level is LevelFatal", func() {
 			Level = LevelFatal
 			Error("badtest")
 			c.So(writer.GetLastLog(), c.ShouldNotEqual, "badtest")
@@ -121,11 +121,11 @@ func TestError(t *testing.T) {
 	})
 }
 
-func TestCritical(t *testing.T) {
+func TestFatal(t *testing.T) {
 	c.Convey("Given a MockWriter", t, func() {
 		writer := &MockWriter{}
 		Writer = writer
-		c.Convey("When Level is LevelCritical", func() {
+		c.Convey("When Level is LevelFatal", func() {
 			Level = LevelFatal
 			c.So(func() { Fatal("fatal") }, c.ShouldPanic)
 			c.So(writer.GetLastLog(), c.ShouldEqual, "fatal")
