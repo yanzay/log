@@ -1,6 +1,7 @@
 package log
 
 import (
+	"fmt"
 	"testing"
 
 	c "github.com/smartystreets/goconvey/convey"
@@ -202,5 +203,20 @@ func TestFormat(t *testing.T) {
 			c.So(writer.GetLastLog(), c.ShouldEqual, "answer: 42")
 		})
 
+	})
+}
+
+type BadWriter struct{}
+
+func (bw BadWriter) Write([]byte) (int, error) {
+	return 0, fmt.Errorf("It's a bad writer, don't write here!")
+}
+
+func TestBadWriter(t *testing.T) {
+	c.Convey("Given bad writer", t, func() {
+		Writer = BadWriter{}
+		c.Convey("Log should not fail", func() {
+			c.So(func() { printString("hi, bad writer") }, c.ShouldNotPanic)
+		})
 	})
 }
