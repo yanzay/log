@@ -76,7 +76,6 @@ func init() {
 }
 
 func AddWriter(writer io.Writer) {
-	fmt.Printf("Adding new writer: %v\n", writer)
 	if Writer == nil {
 		Writer = writer
 	} else {
