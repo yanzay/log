@@ -16,7 +16,7 @@ type MockWriter struct {
 
 func (mw *MockWriter) Write(v []byte) (int, error) {
 	mw.lastLog = v
-	return 0, nil
+	return len(v), nil
 }
 
 func (mw *MockWriter) GetLastLog() string {
@@ -228,5 +228,18 @@ func TestBadWriter(t *testing.T) {
 		c.Convey("Log should not fail", func() {
 			c.So(func() { printString("hi, bad writer") }, c.ShouldNotPanic)
 		})
+	})
+}
+
+func TestMultiWriter(t *testing.T) {
+	c.Convey("Given two writers", t, func() {
+		writer1 := &MockWriter{}
+		writer2 := &MockWriter{}
+		Writer = nil
+		AddWriter(writer1)
+		AddWriter(writer2)
+		Println("testmulti")
+		c.So(writer1.GetLastLog(), c.ShouldEqual, "testmulti")
+		c.So(writer2.GetLastLog(), c.ShouldEqual, "testmulti")
 	})
 }
