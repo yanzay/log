@@ -75,6 +75,14 @@ func init() {
 	flag.Var(&Level, "log-level", "Log level: trace|debug|info|warning|error|fatal")
 }
 
+func AddWriter(writer io.Writer) {
+	if Writer == nil {
+		Writer = writer
+	} else {
+		Writer = io.MultiWriter(Writer, writer)
+	}
+}
+
 func printString(s string) {
 	_, err := Writer.Write([]byte(s))
 	if err != nil {
