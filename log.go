@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"io"
+	"strings"
 )
 
 type LogLevel int
@@ -92,7 +93,8 @@ func printString(s string) {
 
 func lprint(level LogLevel, value interface{}) {
 	if level >= Level {
-		printString(fmt.Sprint(value))
+		prefix := fmt.Sprintf("[%s] ", strings.ToUpper(level.String()))
+		printString(prefix + fmt.Sprint(value))
 	}
 }
 
@@ -143,7 +145,7 @@ func Errorf(format string, params ...interface{}) { lprintf(LevelError, format, 
 // Fatal logs fatal error and panic
 func Fatal(value interface{}) {
 	str := fmt.Sprint(value)
-	printString(str)
+	printString("[FATAL] " + str)
 	panic(str)
 }
 
