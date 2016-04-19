@@ -183,7 +183,7 @@ func TestFlags(t *testing.T) {
 			err := flags.Parse(args)
 			c.So(err.Error(), c.ShouldContainSubstring, "Unknown logging level incorrect")
 
-			c.So(logLevel(0).String(), c.ShouldEqual, "unknown")
+			c.So(LogLevel(0).String(), c.ShouldEqual, "unknown")
 			c.So(Level, c.ShouldEqual, LevelInfo)
 		})
 	})
